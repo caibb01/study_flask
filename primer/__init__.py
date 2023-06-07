@@ -7,11 +7,8 @@ from primer.views.login import login_Bp
 def create_app():
     app = Flask(__name__, template_folder='template')
 
-    # app.secret_key = "asdflasklsadlfkhj"
+    app.secret_key = "asdflasklsadlfkhj"
 
-    @app.route('/index')
-    def index():
-        return '我是直接访问的噢aaa'
 
     @app.route('/ssss')
     def test():
