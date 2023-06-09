@@ -37,6 +37,18 @@ def login():
     error = "用户名密码错误"
     return render_template('login.html', error=error)
 
+@login_Bp.app_template_global()
+def x1_global(arg,name):
+    return "x1我是arg"+arg+"x1我是name"+name
+@login_Bp.app_template_filter()
+def x2(arg,name):
+    return "x2我是arg"+arg+"x2我是name"+name
+def func(arg):
+    return "你好" + arg
+@login_Bp.route('/md')
+def md():
+    num_list = [11, 2, 2, 3, 33]
+    return render_template('login2.html', nums=num_list, fuu=func)
 
 @login_Bp.route('/index')
 @auth

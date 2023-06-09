@@ -1,5 +1,7 @@
 from dbutils.pooled_db import PooledDB
 import pymysql
+import threading
+import time
 
 
 class SqlHelper(object):
@@ -19,6 +21,8 @@ class SqlHelper(object):
             database='cm-rep',
             charset='utf8'
         )
+        self.local = threading.local()
+
 
     def open(self):
         conn = self.Pool.connection()
@@ -44,7 +48,37 @@ class SqlHelper(object):
         return result
 
 
+    def __enter__(self):
+        print("欢迎进来")
+
+        conn,cursor = self.open()
+        rv = getattr(self.local,'stack',None)
+        # 如果rv也就是返回的stack是空的，那就进行填充
+        if not rv:
+            self.local.stack = [(conn,cursor),]
+        # 如果已经有值了，那就在后面追加append
+        else:
+            rv.append((conn,cursor))
+            self.local.stack=rv
+        return cursor
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # 判断是否有值，有的话删除最后一个栈顶
+        rv = getattr(self.local, 'stack', None)
+        if not rv:
+            return
+        conn, cursor = self.local.stack.pop()
+        cursor.close()
+        conn.close()
+        print("我走了")
+        return
+
+
 db = SqlHelper()
+
+with db as c1:
+    c1.execute('select 1')
+    with db as c2:
+        c2.execute('select 1')
 
 """
 conn=Pool.connection()
