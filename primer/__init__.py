@@ -26,4 +26,5 @@ def create_app():
     app.register_blueprint(xmy, url_prefix='/web')
     app.register_blueprint(login_Bp, url_prefix='/admin')
 
+    app.__call__()
     return app
